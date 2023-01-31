@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 
 import requests
 
-from log import logger
+from src.root_log import logger
 
 
 class GitLabManager:
@@ -22,6 +22,7 @@ class GitLabManager:
         }
         # self._project_info = self._get_project_info()
         self._raw_host = "https://gitlab.com/{}/-/raw/main/{}"
+        self._proxies = {"http": None, "https": None}
 
     def projects_access_requests(self):
         url = f"projects/{self._project_id}/access_requests"
@@ -37,17 +38,17 @@ class GitLabManager:
     def post(self, url, data=None, headers=None, **kwargs):
         headers = {**self._headers, **(headers or {})}
         logger.info("%s, data %s, headers %s" % (self._host + url, data, headers))
-        return requests.post(self._host + url, headers=headers, data=data, **kwargs)
+        return requests.post(self._host + url, headers=headers, data=data, proxies=self._proxies, **kwargs)
 
     def get(self, url, params=None, headers=None, **kwargs):
         headers = {**self._headers, **(headers or {})}
         logger.info("%s, params %s, headers %s" % (self._host + url, params, headers))
-        return requests.get(self._host + url, headers=headers, params=params, **kwargs)
+        return requests.get(self._host + url, headers=headers, params=params, proxies=self._proxies, **kwargs)
 
     def head(self, url, params=None, data=None, headers=None, **kwargs):
         logger.info(self._host + url)
         return requests.head(self._host + url, headers={**self._headers, **(headers or {})}, params=params, data=data,
-                             **kwargs)
+                             proxies=self._proxies, **kwargs)
 
     def _get_project_info(self):
         return self.get(f"projects/{self._project_id}").json()
@@ -72,7 +73,9 @@ class GitLabManager:
         status_code = resp.status_code
         result = resp.json()
         if status_code == 201:
-            return True, self.get_file_address(result.get("file_path"))
+            link = self.get_file_address(result.get("file_path"))
+
+            return True, link
         return False, result.get("message")
 
     def create_file_from_path(self, file_path):

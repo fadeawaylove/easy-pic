@@ -1,7 +1,7 @@
 import json
 import os
 
-from constant import home_path
+from src.constant import home_path
 
 
 class ConfigManager:
@@ -31,5 +31,33 @@ class ConfigManager:
         self._save(conf)
 
 
+class PicRecordManager:
+    _PATH = os.path.join(home_path, ".easy_pic/record.json")
+    conf_path = os.path.dirname(os.path.abspath(_PATH))
+    os.makedirs(conf_path, exist_ok=True)
+    if not os.path.exists(_PATH):
+        open(_PATH, "w")
+
+    @classmethod
+    def add_record(cls, data: dict):
+        with open(cls._PATH, "a") as f:
+            f.write(json.dumps(data) + "\n")
+
+    @classmethod
+    def read_records(cls, lines=20):
+        res = []
+        with open(cls._PATH, "r") as f:
+            for x in f:
+                res.insert(0, json.loads(x))
+                if len(res) > lines:
+                    res.pop()
+        return res
+
+
 default_path = os.path.join(home_path, ".easy_pic/default.json")
 default_config_manager = ConfigManager(default_path)
+
+if __name__ == '__main__':
+    # for i in range(20):
+    #     PicRecordManager.add_record({i: 2})
+    print(PicRecordManager.read_records(3))
