@@ -26,7 +26,7 @@ class GitLabManager:
 
     def projects_access_requests(self):
         url = f"projects/{self._project_id}/access_requests"
-        resp = self.get(url)
+        resp = self.get(url, timeout=3)
         if resp.status_code == 200:
             return True, "ok"
         result = resp.json()
@@ -69,7 +69,7 @@ class GitLabManager:
                 "encoding": "base64",
                 "content": file_content,
                 "commit_message": commit_message.format(file_name)}
-        resp = self.post(url, json=data)
+        resp = self.post(url, json=data, timeout=10)
         status_code = resp.status_code
         result = resp.json()
         if status_code == 201:

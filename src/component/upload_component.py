@@ -8,7 +8,7 @@ import requests
 
 from src.app import root_app
 from src.common_imports import ttk, ToolTip
-from src.component.picture_gallery import album_frame, PictureGallery
+from src.component.picture_gallery import PictureGallery
 from src.constant import image_file_types
 from src.manager.config_manager import default_config_manager, PicRecordManager
 from src.manager.gitlab_manager import GitLabManager
@@ -50,7 +50,11 @@ class FileUploadHandler:
             messagebox.showerror("上传错误", "请选择上传账号")
             return
         cls.progress_bar.start_progress()
-        ok, msg = manager.create_file(file_name, file_content)
+        try:
+            ok, msg = manager.create_file(file_name, file_content)
+        except Exception as e:
+            logger.error(e)
+            return
         logger.info("upload file %s %s, msg %s" % (file_name, ok, msg))
         if ok:
             # 记录文件信息

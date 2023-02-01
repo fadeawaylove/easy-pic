@@ -82,12 +82,22 @@ class PictureGallery:
 
     @classmethod
     def show_images(cls):
-        for one_row in list(zip(*[iter(PicRecordManager.read_records())] * 3)):
-            row_frame = ttk.Frame(album_frame)
-            row_frame.pack()
-            for info in one_row:
-                img_item = ImageItem(row_frame, info, width=110, height=110)
-                img_item.pack(side=ttk.LEFT)
+        records = PicRecordManager.read_records()
+        records_iter = iter(records)
+        is_run = True
+        while is_run:
+            one_row = []
+            for _ in range(3):
+                try:
+                    one_row.append(next(records_iter))
+                except StopIteration:
+                    is_run = False
+            if one_row:
+                row_frame = ttk.Frame(album_frame)
+                row_frame.pack(anchor=ttk.W)
+                for info in one_row:
+                    img_item = ImageItem(row_frame, info, width=110, height=110)
+                    img_item.pack(side=ttk.LEFT, )
 
     @classmethod
     def refresh_images(cls):

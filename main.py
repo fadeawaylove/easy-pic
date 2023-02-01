@@ -18,4 +18,5 @@ PictureGallery.show_images()
 
 if __name__ == '__main__':
     root_app.place_window_center()
+    root_app.grab_set()
     root_app.mainloop()
