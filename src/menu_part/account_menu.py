@@ -4,6 +4,7 @@ from src.app import root_app
 from src.common_imports import ttk
 from src.manager.config_manager import default_config_manager
 from src.manager.gitlab_manager import GitLabManager
+from src.root_log import root_logger
 from src.utils.task_utils import thread_pool
 
 
@@ -15,7 +16,11 @@ def click_account_gitlab():
         project_id = project_id_var.get()
         access_token = access_token_var.get()
         manager = GitLabManager(access_token, project_id)
-        return manager.projects_access_requests()
+        try:
+            return manager.projects_access_requests()
+        except Exception as e:
+            root_logger.error(e)
+            return False, e
 
     def save_gitlab_account():
         ok, msg = check_access()
@@ -35,7 +40,7 @@ def click_account_gitlab():
         if ok:
             messagebox.showinfo("检查成功", "gitlab账号检查成功！", parent=gitlab_toplevel)
         else:
-            messagebox.showerror("检查失败", "gitlab账号检查失败，请检查配置！", parent=gitlab_toplevel)
+            messagebox.showerror("检查失败", f"gitlab账号检查失败，请检查配置！\n错误信息：{msg}", parent=gitlab_toplevel)
 
     gitlab_toplevel = ttk.Toplevel(title="Gitlab账号设置", resizable=[False, False], transient=root_app)
     gitlab_toplevel.grab_set()

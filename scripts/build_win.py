@@ -15,11 +15,11 @@ pyinstaller_versionfile.create_versionfile(
     product_name="EasyPic"
 )
 
-install_command = "pip install -r requirements_mac.txt"
-pack_command = f"pyinstaller -w -i appico.icns -n EasyPic --version-file=scripts/{VERSION_FILE} main.py --collect-all tkinterDnD --add-data src:src -y"
+install_command = "pip install -r requirements_win.txt"
+pack_command = f"pyinstaller -w -i appico.icns -n EasyPic --version-file=scripts/{VERSION_FILE} main.py --collect-all tkinterDnD --add-data src;src -y"
 exec_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-os.system(f"cd {exec_path} && {install_command} && {pack_command}")
+os.system(f"cd {exec_path} & {install_command} & {pack_command}")
 
 #  pyinstaller -w main.py --additional-hooks-dir ext_hooks --collect-all tkinterDnD --add-data src:src
 #  pyinstaller -w main.py --collect-all tkinterDnD --add-data src:src

@@ -6,7 +6,6 @@ from ttkbootstrap import utility
 from ttkbootstrap.icons import Icon
 from ttkbootstrap.style import Style
 from ttkbootstrap.window import apply_class_bindings, apply_all_bindings
-
 from src.constant import resource_path
 
 

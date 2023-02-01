@@ -3,6 +3,7 @@ from PIL import ImageGrab
 from typing import Tuple, Union
 from io import BytesIO
 from src.constant import platform
+from src.utils.id_utils import gen_short_id
 from src.utils.notice_utils import show_notification
 
 
@@ -16,7 +17,7 @@ def get_paste_img_content() -> Tuple[bool, Union[Tuple[str, bytes], bool]]:
         file_paths = WinClipboard.get_file_path_list()
     else:
         msg = f"not supported platform {platform}"
-        show_notification(msg)
+        show_notification(msg, "不支持的系统")
         raise Exception(msg)
 
     if file_paths:
@@ -26,7 +27,7 @@ def get_paste_img_content() -> Tuple[bool, Union[Tuple[str, bytes], bool]]:
     if not file_paths:
         img = ImageGrab.grabclipboard()
         if img:
-            file_name = os.path.basename(img.filename)
+            file_name = os.path.basename(img.filename or gen_short_id())
             content = BytesIO()
             img.save(content, format=img.format or file_name.split(".")[-1])
             content.seek(0)
